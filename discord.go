@@ -40,7 +40,7 @@ sess, err := discordgo.New("Bot " + BotToken)
 
 	defer sess.Close()
 
-	fmt.Println("The bot is online!")
+	fmt.Println("The bot is online! You can end it using CTRL+C")
 
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
@@ -61,6 +61,8 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		switch command {
 		case "hello":
 			sendWorld(s, m)
+		case "joke":
+			sendJoke(s, m)
 		case "join":
 			joinVoiceChat(s, m)
 		case "leave":
@@ -76,7 +78,11 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 func sendWorld(s *discordgo.Session, m *discordgo.MessageCreate) {
 	s.ChannelMessageSend(m.ChannelID, "world!")
 }
-	
+
+func sendJoke(s *discordgo.Session, m *discordgo.MessageCreate) {
+	joke:= getJoke()
+	s.ChannelMessageSend(m.ChannelID, joke)
+}
 
 func joinVoiceChat(s *discordgo.Session, m *discordgo.MessageCreate) {
 	guildID := m.GuildID
