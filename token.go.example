@@ -1,0 +1,5 @@
+package main
+
+const (
+    BotToken = "INSERT_BOT_TOKEN"
+)
