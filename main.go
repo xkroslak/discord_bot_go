@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -17,7 +18,6 @@ var (
 )
 
 func main() {
-	// Connecto to Discord
 	err := DiscordConnect()
 	if err != nil {
 		log.Println("FATA: Discord", err)

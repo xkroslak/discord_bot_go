@@ -15,7 +15,7 @@ import (
 )
 
 func DiscordConnect() (err error) {
-sess, err := discordgo.New("Bot " + BotToken)
+	sess, err := discordgo.New("Bot " + BotToken)
 	if err != nil {
 		return err
 	}
@@ -61,6 +61,8 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		switch command {
 		case "hello":
 			sendWorld(s, m)
+		case "help":
+			showHelp(s, m)
 		case "joke":
 			sendJoke(s, m)
 		case "join":
@@ -73,52 +75,6 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			s.ChannelMessageSend(m.ChannelID, "Sorry, I don't recognize that command.")
 		}
 	}
-}
-
-func sendWorld(s *discordgo.Session, m *discordgo.MessageCreate) {
-	s.ChannelMessageSend(m.ChannelID, "world!")
-}
-
-func sendJoke(s *discordgo.Session, m *discordgo.MessageCreate) {
-	joke:= getJoke()
-	s.ChannelMessageSend(m.ChannelID, joke)
-}
-
-func joinVoiceChat(s *discordgo.Session, m *discordgo.MessageCreate) {
-	guildID := m.GuildID
-	voiceState, err := s.State.VoiceState(guildID, m.Author.ID)
-	if err != nil {
-		log.Println("error getting voice state: ", err)
-		return
-	}
-
-	if voiceState == nil || voiceState.ChannelID == "" {
-		s.ChannelMessageSend(m.ChannelID, "You need to be in a voice channel first.")
-		return
-	}
-
-	voiceConnection, err = s.ChannelVoiceJoin(guildID, voiceState.ChannelID, false, true)
-	if err != nil {
-		log.Println("error joining voice channel: ", err)
-		return
-	}
-
-	s.ChannelMessageSend(m.ChannelID, "I have joined the voice chat!")
-}
-
-func leaveVoiceChat(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if voiceConnection == nil {
-		s.ChannelMessageSend(m.ChannelID, "I'm not in a voice channel.")
-		return
-	}
-
-	err := voiceConnection.Disconnect()
-	if err != nil {
-		log.Println("error leaving voice channel: ", err)
-		return
-	}
-
-	s.ChannelMessageSend(m.ChannelID, "I have left the voice chat!")
 }
 
 func playSongVoiceChat(s *discordgo.Session, m *discordgo.MessageCreate, args []string) {
@@ -156,7 +112,7 @@ func playSongVoiceChat(s *discordgo.Session, m *discordgo.MessageCreate, args []
 		return
 	}
 
-	// Create a new ffmpeg command to stream the audio
+	// TODO: Create a new ffmpeg command to stream the audio
 	ffmpeg := exec.Command("ffmpeg", "-i", audioStreamURL, "-f", "s16le", "-ar", "48000", "-ac", "2", "pipe:1")
 	//ffmpeg := exec.Command("ffmpeg", "-i", audioStreamURL, "-c:a", "aac", "-b:a", "128k", "-f", "s16le", "-ar", "48000", "-ac", "2", "pipe:1")
 	ffmpegOut, err := ffmpeg.StdoutPipe()
@@ -171,10 +127,10 @@ func playSongVoiceChat(s *discordgo.Session, m *discordgo.MessageCreate, args []
 		return
 	}
 
-	// Create a new discordgo stream to play the audio
+	// TODO: Create a new discordgo stream to play the audio
 	stream := NewStream(voiceConnection, ffmpegOut)
 
-	// Start the stream and wait for it to finish
+	// TODO: Start the stream and wait for it to finish
 	stream.Play()
 	stream.Wait()
 
@@ -241,3 +197,5 @@ func (s *Stream) Wait() {
 		time.Sleep(10 * time.Millisecond)
 	}
 }
+
+
