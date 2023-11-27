@@ -63,6 +63,8 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			sendWorld(s, m)
 		case "help":
 			showHelp(s, m)
+		case "poll":
+			makePoll(s, m, args[1:])
 		case "joke":
 			sendJoke(s, m)
 		case "join":
